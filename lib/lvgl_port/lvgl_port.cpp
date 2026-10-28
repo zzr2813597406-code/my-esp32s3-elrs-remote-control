@@ -4,6 +4,22 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+// 任务函数声明
+SemaphoreHandle_t lvgl_mutex = NULL;
+
+void lvgl_lock_init(void) {
+    if (lvgl_mutex == NULL) {
+        lvgl_mutex = xSemaphoreCreateMutex();
+    }
+}
+
+void lvgl_lock(void) {
+    xSemaphoreTake(lvgl_mutex, portMAX_DELAY);
+}
+
+void lvgl_unlock(void) {
+    xSemaphoreGive(lvgl_mutex);
+}
 // ========== 屏幕1 配置 ==========
 #define SCREEN1_WIDTH  128
 #define SCREEN1_HEIGHT 64

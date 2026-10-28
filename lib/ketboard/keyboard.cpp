@@ -1,6 +1,6 @@
 #include "keyboard.h"
 #include <Arduino.h>
-
+#include "menu.h"
 #define Row1 9
 #define Row2 10
 #define Row3 13
@@ -37,6 +37,10 @@ bool event_R_left   = false;
 bool event_R_right  = false;
 bool event_R_up     = false;
 bool event_R_down   = false;
+
+
+
+
 
 void keyboard_init() {
     pinMode(Row1, INPUT_PULLUP);
@@ -91,4 +95,41 @@ void keyboard_scan() {
     event_R_right = (R_right && !last_R_right);
     event_R_up    = (R_up    && !last_R_up);
     event_R_down  = (R_down  && !last_R_down);
+
+    if (event_L_left)
+    {
+        menu_input(MENU_BACK);
+        return;
+    }
+    
+    if (event_L_right)
+    {
+        menu_input(MENU_ENTER);
+        return;
+    } 
+    if (event_L_up)
+    {
+        menu_input(MENU_UP);
+    }    
+    if (event_L_down)
+    {
+        menu_input(MENU_DOWN);
+        return;
+    }  
 }
+
+// static uint32_t last_dir_ms = 0;
+
+// void scan_menu_input(void)
+// {
+//     // 用校准后的值判断，阈值 ±400（-1000~1000 量程）
+//     int y = normalize_axis(cal_LY, L_Y);   // 上负下正，按你的轴方向调整
+
+//     if (millis() - last_dir_ms > 250) {    // 250ms 防连跳
+//         if (y > 400)  { menu_input(MENU_DOWN);  last_dir_ms = millis(); }
+//         if (y < -400) { menu_input(MENU_UP);    last_dir_ms = millis(); }
+//     }
+
+//     if (event_confirm) menu_input(MENU_ENTER);   // 你自己的确认键边沿事件
+//     if (event_back)    menu_input(MENU_BACK);    // 你自己的返回键边沿事件
+// }

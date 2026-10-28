@@ -40,7 +40,7 @@ void bar_style_set(lv_obj_t *&bar,lv_obj_t *&label) {
     lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, LV_PART_INDICATOR);
 
     lv_obj_set_size(bar, 64, 10);
-    lv_bar_set_range(bar, 0, 2047);
+    lv_bar_set_range(bar, -100, 100);
 }
 
 void show_info_on_oled2() {
@@ -79,20 +79,20 @@ void show_info_on_oled2() {
          
     }
     // 更新文本内容
-    lv_label_set_text_fmt(CH0_label, "CH0:%04d", channels.ch0);
-    lv_bar_set_value(CH0_bar, channels.ch0, LV_ANIM_OFF);
+    lv_label_set_text_fmt(CH0_label, "CH0:%04d", normalize_axis(cal_LX, L_X, 80));
+    lv_bar_set_value(CH0_bar, normalize_axis(cal_LX, L_X, 80), LV_ANIM_OFF);
 
-    lv_label_set_text_fmt(CH1_label, "CH1:%04d", channels.ch1);
-    lv_bar_set_value(CH1_bar, channels.ch1, LV_ANIM_OFF);
+    lv_label_set_text_fmt(CH1_label, "CH1:%04d", normalize_axis(cal_LY, L_Y, 80));
+    lv_bar_set_value(CH1_bar, normalize_axis(cal_LY, L_Y, 80), LV_ANIM_OFF);
 
-    lv_label_set_text_fmt(CH2_label, "CH2:%04d", channels.ch2);
-    lv_bar_set_value(CH2_bar, channels.ch2, LV_ANIM_OFF);
+    lv_label_set_text_fmt(CH2_label, "CH2:%04d", normalize_axis(cal_RX, R_X, 80));
+    lv_bar_set_value(CH2_bar, normalize_axis(cal_RX, R_X, 80), LV_ANIM_OFF);
 
-    lv_label_set_text_fmt(CH3_label, "CH3:%04d", channels.ch3);
-    lv_bar_set_value(CH3_bar, channels.ch3, LV_ANIM_OFF);
+    lv_label_set_text_fmt(CH3_label, "CH3:%04d", normalize_axis(cal_RY, R_Y, 80));
+    lv_bar_set_value(CH3_bar, normalize_axis(cal_RY, R_Y, 80), LV_ANIM_OFF);
 
-    lv_label_set_text_fmt(CH4_label, "CH4:%04d", channels.ch4);
+    // lv_label_set_text_fmt(CH4_label, "CH4:%04d", normalize_axis(cal_RY, R_Y, 80));
     lv_bar_set_value(CH4_bar, channels.ch4, LV_ANIM_OFF);
     // 强制刷新
-    lv_refr_now(disp2);
+    // lv_refr_now(disp2);
 }

@@ -15,25 +15,49 @@ void lvgl_task(void *pvParameters);
 void key_task(void *pvParameters) {
     while(1) {
         keyboard_scan();
-        show_info_on_oled2();
         xuanniu_read();
         joystick_read();
+        joystick_update();
+
+        lvgl_lock();
+        show_info_on_oled2();
+        lvgl_unlock();
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
 void lvgl_task(void *pvParameters) {
     while (1) {
+        lvgl_lock();
         lv_timer_handler();
+
+        // ---- 兜底：强制刷两块屏 ----
+        lv_display_t *d1 = lvgl_port_get_disp1();
+        if (d1) { lv_display_set_default(d1); lv_refr_now(d1); }
+
+        lv_display_t *d2 = lvgl_port_get_disp2();   // 没有就删这两行
+        if (d2) { lv_display_set_default(d2); lv_refr_now(d2); }
+        
+        lvgl_unlock();
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 
 void setup() {
     Serial.begin(115200);
+
+    lvgl_lock_init();
+
     lvgl_port_init();
     keyboard_init();
+
+
     show_info_on_oled2();
+
+    menu_init(lvgl_port_get_disp1(), root_items,
+          sizeof(root_items) / sizeof(root_items[0]));
+
+
     analogReadResolution(11);
     // 初始化 CRSF（会自动创建任务）
     crsf_init();

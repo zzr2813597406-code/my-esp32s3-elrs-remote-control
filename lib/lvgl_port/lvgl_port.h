@@ -10,4 +10,9 @@ void lvgl_port_init(void);
 lv_display_t* lvgl_port_get_disp1(void);
 lv_display_t* lvgl_port_get_disp2(void);
 
+void lvgl_lock_init(void);
+
+void lvgl_lock(void);
+
+void lvgl_unlock(void);
 #endif
