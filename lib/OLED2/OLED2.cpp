@@ -1,9 +1,8 @@
 #include "OLED2.h"
-#include "lvgl_port.h"
-#include "keyboard.h"
 #include <Arduino.h>
+#include "lvgl_port.h"
 #include "joystick.h"
-#include "CRSF.h"
+#include "CRSF.h"          // channels
 
 lv_obj_t *CH0_label = nullptr;
 lv_obj_t *CH0_bar = nullptr;
@@ -25,9 +24,11 @@ static lv_obj_t *CH5_bar = nullptr;
 
 static bool initialized = false;
 
-void bar_style_set(lv_obj_t *&bar,lv_obj_t *&label) {
-    bar = lv_bar_create(lv_scr_act());
-    label = lv_label_create(lv_scr_act());
+static lv_obj_t *scr2 = nullptr;
+
+void bar_style_set(lv_obj_t *&parent, lv_obj_t *&bar,lv_obj_t *&label) {
+    bar = lv_bar_create(parent);
+    label = lv_label_create(parent);
 
     lv_obj_set_style_text_font(label, &lv_font_montserrat_10, 0);
     lv_obj_set_style_text_color(label, lv_color_white(), 0);
@@ -49,29 +50,30 @@ void show_info_on_oled2() {
         Serial.println("Error: disp2 not available");
         return;
     }
-    lv_display_set_default(disp2);
+    // lv_display_set_default(disp2);
 
     if (!initialized) {
         // 第一次调用时设置背景和创建标签
-        lv_obj_set_style_bg_color(lv_scr_act(), lv_color_black(), 0);
+        scr2 = lv_display_get_screen_active(disp2);   // lv_display.h:409
+        lv_obj_set_style_bg_color(scr2, lv_color_black(), 0);
 
-        bar_style_set(CH0_bar,CH0_label);
+        bar_style_set(scr2, CH0_bar, CH0_label);      // 改成显式传父对象
         lv_obj_set_pos(CH0_label, 0, 1);
         lv_obj_set_pos(CH0_bar, 64, 1);
 
-        bar_style_set(CH1_bar,CH1_label);
+        bar_style_set(scr2,CH1_bar,CH1_label);
         lv_obj_set_pos(CH1_label, 0, 1+12);
         lv_obj_set_pos(CH1_bar, 64, 1+12);
 
-        bar_style_set(CH2_bar,CH2_label);
+        bar_style_set(scr2,CH2_bar,CH2_label);
         lv_obj_set_pos(CH2_label, 0, 1+24);
         lv_obj_set_pos(CH2_bar, 64, 1+24);
 
-        bar_style_set(CH3_bar,CH3_label);
+        bar_style_set(scr2,CH3_bar,CH3_label);
         lv_obj_set_pos(CH3_label, 0, 1+36);
         lv_obj_set_pos(CH3_bar, 64, 1+36);
 
-        bar_style_set(CH4_bar,CH4_label);
+        bar_style_set(scr2,CH4_bar,CH4_label);
         lv_obj_set_pos(CH4_label, 0, 1+48);
         lv_obj_set_pos(CH4_bar, 64, 1+48);
 

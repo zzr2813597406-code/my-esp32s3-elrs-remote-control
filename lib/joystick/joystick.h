@@ -8,8 +8,6 @@ extern int L_Y;
 extern int R_X;
 extern int R_Y;
 
-extern int R_X_MAX;
-
 extern bool joystick_initialized;
 
 void xuanniu_read();
@@ -28,4 +26,8 @@ int normalize_axis_to_crsf(const AxisCal &c, int raw, int deadzone);
 extern AxisCal cal_LX, cal_LY, cal_RX, cal_RY;
 
 void joystick_update();
+
+// 重新开始一次摇杆校准（只重置状态，采样在 joystick_update() 里推进）
+void joystick_start_calibration(void);
+
 #endif // XUANNIU_H

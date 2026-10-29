@@ -96,6 +96,9 @@ void keyboard_scan() {
     event_R_up    = (R_up    && !last_R_up);
     event_R_down  = (R_down  && !last_R_down);
 
+    // 覆盖层显示期间（校准中、结果提示），按键只更新事件标志，不送给菜单
+    if (ui_overlay_active()) return;
+
     if (event_L_left)
     {
         menu_input(MENU_BACK);

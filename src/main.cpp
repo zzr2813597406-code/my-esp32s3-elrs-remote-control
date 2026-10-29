@@ -1,12 +1,4 @@
-#include <Arduino.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include "lvgl_port.h"
-#include "menu.h"
-#include "keyboard.h"
-#include "OLED2.h"
-#include "joystick.h"
-#include "crsf.h"          // 包含 CRSF 头文件
+#include "app.h"
 
 // 任务函数声明
 void key_task(void *pvParameters);
@@ -17,11 +9,14 @@ void key_task(void *pvParameters) {
         keyboard_scan();
         xuanniu_read();
         joystick_read();
-        joystick_update();
+        joystick_update();   // 校准状态机必须每轮调用，靠内部状态推进
+
+        menu_update();      // 自定义页（MI_PAGE）的实时刷新，内部自己加锁
 
         lvgl_lock();
         show_info_on_oled2();
         lvgl_unlock();
+
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
@@ -31,13 +26,6 @@ void lvgl_task(void *pvParameters) {
         lvgl_lock();
         lv_timer_handler();
 
-        // ---- 兜底：强制刷两块屏 ----
-        lv_display_t *d1 = lvgl_port_get_disp1();
-        if (d1) { lv_display_set_default(d1); lv_refr_now(d1); }
-
-        lv_display_t *d2 = lvgl_port_get_disp2();   // 没有就删这两行
-        if (d2) { lv_display_set_default(d2); lv_refr_now(d2); }
-        
         lvgl_unlock();
         vTaskDelay(pdMS_TO_TICKS(5));
     }
@@ -54,8 +42,7 @@ void setup() {
 
     show_info_on_oled2();
 
-    menu_init(lvgl_port_get_disp1(), root_items,
-          sizeof(root_items) / sizeof(root_items[0]));
+    menu_init(lvgl_port_get_disp1(), root_items, root_items_count);
 
 
     analogReadResolution(11);
